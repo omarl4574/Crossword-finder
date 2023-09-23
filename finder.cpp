@@ -8,8 +8,9 @@
 
 using namespace std;
 
-vector<vector<char>> SetUpBoard(int amount_rows, int amount_cols, string letters){
-    vector<vector<char>> board(amount_rows, vector<char>(amount_cols));
+// The function that set up the board as a 2D array to then sort through later and find all the words
+vector<vector<string>> SetUpBoard(int amount_rows, int amount_cols, string letters){
+    vector<vector<string>> board(amount_rows, vector<string>(amount_cols));
 
     int letter_index = 0;
     for(int rows = 0; rows < amount_rows; rows++){
@@ -21,13 +22,43 @@ vector<vector<char>> SetUpBoard(int amount_rows, int amount_cols, string letters
     return board;
 }
 
-void PrintBoard(vector<vector<char>> board, int amount_rows, int amount_cols){
-    for(int rows = 0; rows < amount_rows; rows++){
-        for(int cols = 0; cols < amount_cols; cols++){
+// Prints the cross word puzzle board
+void PrintBoard(vector<vector<string>> board){
+    for(int rows = 0; rows < board.size(); rows++){
+        for(int cols = 0; cols < board[rows].size(); cols++){
             cout << board[rows][cols] << " ";
         }
         cout << "\n";
     }
+}
+
+/* asks the user for all the words they need to find in the cross word puzzle they entered 
+and stores every word they entered in a vector called words */
+
+vector<string> GetAllWords(){
+    vector<string> words;
+
+    while(true){
+        cout << "Enter words (type 'quit' exit): ";
+        string word;
+        cin >> word;
+
+        if(word == "quit"){
+            break;
+        }
+
+        words.push_back(word);
+    }
+
+    return words;
+}
+
+// prints all the words the user has entered from the words vector
+void PrintWords(vector<string> words){
+    for(int i = 0; i < words.size(); i++){
+        cout << words[i] << ", ";
+    }
+    cout << "\n";
 }
 
 int main(){
@@ -44,8 +75,8 @@ int main(){
     cout << "Enter the board all horizontally: ";
     cin >> letters;
 
-    vector<vector<char>> board = SetUpBoard(num_rows, num_cols, letters);
-    PrintBoard(board, num_rows, num_cols);
-
+    vector<vector<string>> board{SetUpBoard(num_rows, num_cols, letters)};
+    vector<string> words{GetAllWords()};
+    
     return 0;
 }
