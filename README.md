@@ -1,5 +1,23 @@
 # Crossword-finer
---Still a work in progress--
 
-using c++ I will be taking a cross word board and find all words in the board 
+Given a list of words and a cross word puzzle board it will give you the first index on where to find the word
+
+## Installation on Ubuntu
+
+```
+sudo apt-get upgrade
+sudo apt-get upgrade 
+git clone https://github.com/omarl4574/Crossword-finder
+cd Crossword-finder
+make
+./finder
+```
+
+## Uninstallation on Ubuntu
+
+```
+make remove
+```
+ 
+ 
 
