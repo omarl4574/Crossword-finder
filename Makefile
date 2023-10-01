@@ -8,5 +8,4 @@ clean:
 	rm *.o
 
 remove:
-	cd ..
-	rm -rf Crossword-finder
+	rm *

@@ -17,6 +17,8 @@ make
 
 ```
 make remove
+ls
+rm -r Crossword-finder
 ```
  
  
