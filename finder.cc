@@ -23,6 +23,7 @@ void printBoard(const vector<vector<char>>& board) {
     cout << endl;
   }
 }
+
 // checks horizontal direction
 bool SearchHorizontal(const vector<vector<char>>& board, const string& word,
                       int row, int col, bool forward) {
