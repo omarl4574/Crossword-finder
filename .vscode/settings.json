@@ -1,0 +1,10 @@
+{
+    "C_Cpp.clang_format_fallbackStyle": "Google",
+    "C_Cpp.default.compilerPath": "/usr/bin/clang++",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "utility": "cpp",
+        "vector": "cpp"
+    },
+}

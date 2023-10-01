@@ -3,6 +3,7 @@
 // @omarl4574
 
 #include <iostream>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -61,6 +62,35 @@ void PrintWords(vector<string> words) {
     cout << words[i] << ", ";
   }
   cout << "\n";
+}
+
+pair<vector<vector<int>>, int> CheckRight(vector<vector<string>> board,
+                                          vector<string> words, int curr_word) {
+  string temp_word;
+  vector<vector<int>> indexs;
+  vector<int> index_pairs;
+  pair<vector<vector<int>>, int> res;
+
+  for (int rows = 0; rows < board.size(); rows++) {
+    for (int cols = 0; cols < board[rows].size(); cols++) {
+      if (begin(board[rows][cols]) != begin(words[curr_word])) {
+        temp_word = "";
+        index_pairs.clear();
+      }
+    }
+  }
+  res.first = indexs;
+  res.second = curr_word;
+  return res;
+}
+/*the function which will take in the board and the list of words and find all
+the words and return a list of indexs where the words have been found*/
+void FindWords(vector<vector<string>> board, vector<string> words) {
+  vector<vector<vector<int>>> indexs;
+  int current_word{0};
+
+  pair right_res{CheckRight(board, words, current_word)};
+  current_word = right_res.second;
 }
 
 int main() {
