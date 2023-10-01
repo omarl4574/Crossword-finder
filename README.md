@@ -17,7 +17,7 @@ make
 
 ```
 make remove
-ls
+cd ..
 rm -r Crossword-finder
 ```
  
