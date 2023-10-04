@@ -10,23 +10,19 @@
 
 using namespace std;
 
-// the files that grab the board and words 
+// the files that grab the board and words
 const string BOARD_FILE = "board.txt";
 const string WORDS_FILE = "words.txt";
 
-// prints the board
-void printBoard(const vector<vector<char>>& board) {
-  for (const auto& row : board) {
-    for (char cell : row) {
-      cout << cell << " ";
-    }
-    cout << endl;
-  }
-}
+// Structure for storing the x and y cords of the words
+struct Coords {
+  int x;
+  int y;
+};
 
 // checks horizontal direction
 bool SearchHorizontal(const vector<vector<char>>& board, const string& word,
-                      int row, int col, bool forward) {
+                      int row, int col, bool forward, vector<Coords>& coords) {
   // if forwards is true direction is 1 and if false the direction is -1
   int direction{forward ? 1 : -1};
 
@@ -35,9 +31,14 @@ bool SearchHorizontal(const vector<vector<char>>& board, const string& word,
       col + direction * (word.length() - 1) >= board[row].size())
     return false;
 
-  // checks to see if the character in the board equal to the characters in the word
+  // checks to see if the character in the board equal to the characters in the
+  // word
   for (int i = 0; i < word.length(); ++i) {
     if (board[row][col + (direction * i)] != word[i]) return false;
+    Coords coordinates;
+    coordinates.x = row;
+    coordinates.y = col + (direction * i);
+    coords.push_back(coordinates);
   }
 
   return true;
@@ -45,7 +46,7 @@ bool SearchHorizontal(const vector<vector<char>>& board, const string& word,
 
 // checks the vertical direction
 bool SearchVertical(const vector<vector<char>>& board, const string& word,
-                    int row, int col, bool forward) {
+                    int row, int col, bool forward, vector<Coords>& coords) {
   // if forwards is true direction is 1 and if false the direction is -1
   int direction{forward ? 1 : -1};
 
@@ -54,16 +55,22 @@ bool SearchVertical(const vector<vector<char>>& board, const string& word,
       row + direction * (word.length() - 1) >= board.size())
     return false;
 
-  // checks to see if the character in the board equal to the characters in the word
+  // checks to see if the character in the board equal to the characters in the
+  // word
   for (int i = 0; i < word.length(); ++i) {
     if (board[row + (direction * i)][col] != word[i]) return false;
+    Coords coordinates;
+    coordinates.x = row + (direction * i);
+    coordinates.y = col;
+    coords.push_back(coordinates);
   }
 
   return true;
 }
 
 bool TopLeftToBottomRight(const vector<vector<char>>& board, const string& word,
-                          int row, int col, bool forward) {
+                          int row, int col, bool forward,
+                          vector<Coords>& coords) {
   // if forwards is true direction is 1 and if false the direction is -1
   int direction{forward ? 1 : -1};
 
@@ -74,10 +81,15 @@ bool TopLeftToBottomRight(const vector<vector<char>>& board, const string& word,
       col + direction * (word.length() - 1) >= board[row].size())
     return false;
 
-  // checks to see if the character in the board equal to the characters in the word
+  // checks to see if the character in the board equal to the characters in the
+  // word
   for (int i = 0; i < word.length(); i++) {
     if (board[row + (direction * i)][col + (direction * i)] != word[i])
       return false;
+    Coords coordinates;
+    coordinates.x = row + (direction * i);
+    coordinates.y = col + (direction * i);
+    coords.push_back(coordinates);
   }
 
   return true;
@@ -85,7 +97,8 @@ bool TopLeftToBottomRight(const vector<vector<char>>& board, const string& word,
 
 // checks from the top right to the bottom left in the diagonal directions
 bool TopRightToBottomLeft(const vector<vector<char>>& board, const string& word,
-                          int row, int col, bool forward) {
+                          int row, int col, bool forward,
+                          vector<Coords>& coords) {
   // if forwards is true direction is 1 and if false the direction is -1
   int direction{forward ? 1 : -1};
 
@@ -96,56 +109,64 @@ bool TopRightToBottomLeft(const vector<vector<char>>& board, const string& word,
       row - direction * (word.length() - 1) <= board.size())
     return false;
 
-  // checks to see if the character in the board equal to the characters in the word
+  // checks to see if the character in the board equal to the characters in the
+  // word
   for (int i = 0; i < word.length(); ++i) {
-    if (board[row + (direction * i)][col - (direction * i)] != word[i]) {
+    if (board[row + (direction * i)][col - (direction * i)] != word[i])
       return false;
-    }
+    Coords coordinates;
+    coordinates.x = row - (direction * i);
+    coordinates.y = col + (direction * i);
+    coords.push_back(coordinates);
   }
 
   return true;
 }
 
-// function that hold both of the diagonal functions together  
+// function that hold both of the diagonal functions together
 bool SearchDiagonal(const vector<vector<char>>& board, const string& word,
-                    int row, int col, bool forward) {
-  return TopRightToBottomLeft(board, word, row, col, forward) ||
-         TopLeftToBottomRight(board, word, row, col, forward);
+                    int row, int col, bool forward, vector<Coords>& coords) {
+  return TopRightToBottomLeft(board, word, row, col, forward, coords) ||
+         TopLeftToBottomRight(board, word, row, col, forward, coords);
 }
 
 // checks rather the horizonatal direction or vertical direction
 bool SearchBoard(const vector<vector<char>>& board, const string& word, int x,
-                 int y, bool forward, bool isDiagonal) {
+                 int y, bool forward, bool isDiagonal, vector<Coords>& coords) {
   if (isDiagonal) {
-    return SearchDiagonal(board, word, x, y, forward);
+    return SearchDiagonal(board, word, x, y, forward, coords);
   } else {
-    return SearchHorizontal(board, word, x, y, forward) ||
-           SearchVertical(board, word, x, y, forward);
+    return SearchHorizontal(board, word, x, y, forward, coords) ||
+           SearchVertical(board, word, x, y, forward, coords);
   }
 }
 
 // finds all the words in the board
 void SolveBoard(const vector<vector<char>>& board,
                 const vector<string>& words) {
-  cout << "Words Found:" << endl;
-
   for (const string& word : words) {
     bool found = false;
+    vector<Coords> coords;
 
     for (int x = 0; x < board.size(); x++) {
       for (int y = 0; y < board[x].size(); y++) {
         // checks for all varitations of how to find words in the board
         // if any are true its print the x and y cords to the console
-        if (SearchBoard(board, word, x, y, true, false) ||
-            SearchBoard(board, word, x, y, false, false) ||
-            SearchBoard(board, word, x, y, true, true) ||
-            SearchBoard(board, word, x, y, false, true)) {
-          cout << word << " found at (" << x << ", " << y << ")" << endl;
+        if (SearchBoard(board, word, x, y, true, false, coords) ||
+            SearchBoard(board, word, x, y, false, false, coords) ||
+            SearchBoard(board, word, x, y, true, true, coords) ||
+            SearchBoard(board, word, x, y, false, true, coords)) {
+          cout << word << " Coordinates are: \n";
+          for (const Coords& coord : coords) {
+            cout << "(" << coord.x + 1 << ", " << coord.y + 1 << ")" << endl;
+          }
+          cout << "================================" << endl;
           found = true;
           break;
         }
       }
-      // if found early it breaks out of the for loop to start searching for the next word
+      // if found early it breaks out of the for loop to start searching for the
+      // next word
       if (found) break;
     }
 
@@ -182,7 +203,6 @@ int main() {
   // puts the board from the 'board.txt' in the board vector
   vector<vector<char>> board;
   string line;
-
   while (getline(boardFile, line)) {
     vector<char> row(line.begin(), line.end());
     board.push_back(row);
